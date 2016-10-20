@@ -33,7 +33,7 @@ create-initial-cert-{{ setname }}-{{ domainlist | join('+') }}:
     - unless: /usr/local/bin/check_letsencrypt_cert.sh {{ domainlist|join(' ') }}
     - name: {{
           letsencrypt.cli_install_dir
-        }}/letsencrypt-auto -d {{ domainlist|join(' -d ') }} certonly
+        }}/letsencrypt-auto certonly --webroot --webroot-path {{ letsencrypt.webroot_dir }} -d {{ domainlist|join(' -d ') }} --non-interactive --no-self-upgrade
     - cwd: {{ letsencrypt.cli_install_dir }}
     - require:
       - file: letsencrypt-config
@@ -43,7 +43,7 @@ letsencrypt-crontab-{{ setname }}-{{ domainlist[0] }}:
   cron.present:
     - name: /usr/local/bin/check_letsencrypt_cert.sh {{ domainlist|join(' ') }} > /dev/null ||{{
           letsencrypt.cli_install_dir
-        }}/letsencrypt-auto -d {{ domainlist|join(' -d ') }} certonly
+        }}/letsencrypt-auto certonly --webroot --webroot-path {{ letsencrypt.webroot_dir }} -d {{ domainlist|join(' -d ') }} --non-interactive --no-self-upgrade
     - month: '*'
     - minute: random
     - hour: random
